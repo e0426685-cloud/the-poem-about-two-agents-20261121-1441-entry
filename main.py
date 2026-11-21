@@ -31,6 +31,12 @@ def main() -> None:
         raise SystemExit("poem out of the 1..280 character gate")
     with open(os.path.join(out_dir, "entry.txt"), "w", encoding="utf-8") as f:
         f.write(text)
+    # Read back and re-check the gate on the file itself, so a bad write
+    # can never silently pass the local run.
+    with open(os.path.join(out_dir, "entry.txt"), encoding="utf-8") as f:
+        written = f.read()
+    if written != text or not (1 <= len(written.strip()) <= 280):
+        raise SystemExit("entry.txt failed the 1..280 character gate on read-back")
 
 
 if __name__ == "__main__":
